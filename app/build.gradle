@@ -1,0 +1,74 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        applicationId "com.wait.translationball"
+        minSdkVersion Versions.minSdkVersion
+        targetSdkVersion Versions.targetSdkVersion
+        versionCode Versions.versionCode
+        versionName Versions.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi"
+
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    testImplementation 'junit:junit:4.12'
+    //kotlin
+    implementation Deps.kotlin
+    implementation Deps.ktx_core
+    implementation Deps.coroutines_android
+    implementation Deps.coroutines_core
+    //androidx
+    implementation Deps.appcompat
+    implementation Deps.material
+    implementation Deps.constraintlayout
+    //hilt
+    implementation Deps.hilt_android
+    kapt Deps.hilt_android_compiler
+    implementation Deps.hilt_lifecycle_viewmodel
+    kapt Deps.hilt_compiler
+    //net
+    implementation Deps.okhttp
+//    implementation Deps.gson
+//    implementation Deps.retrofit
+//    implementation Deps.converter_gson
+//    implementation Deps.coroutines_adapter
+//    implementation Deps.logging_interceptor
+    //jetpack
+    implementation Deps.nav_fragment_ktx
+    implementation Deps.nav_ui_ktx
+    implementation Deps.lifecycle_viewmodel_ktx
+    implementation Deps.lifecycle_runtime_ktx
+    implementation Deps.lifecycle_livedata_ktx
+
+//    implementation Deps.base_recycler_helper
+//    implementation Deps.glide
+}
