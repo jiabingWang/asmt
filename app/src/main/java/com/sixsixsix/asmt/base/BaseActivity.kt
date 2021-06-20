@@ -2,8 +2,14 @@ package com.sixsixsix.asmt.base
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.viewbinding.ViewBinding
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+
 
 /**
  * 又是一年秋
@@ -11,7 +17,8 @@ import androidx.core.app.ActivityCompat
  * 时间: on 2020/9/22
  * 描述：
  */
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<T :ViewBinding> : AppCompatActivity() {
+    lateinit var binding :T
     /**
      * 动态权限请求码
      */
@@ -23,12 +30,19 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     private var needPermissionCall: ((granted: Boolean, checked: Boolean) -> Unit)? = null
 
-    abstract fun getLayoutResOrView(): Int
     abstract fun initData()
     abstract fun initView()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutResOrView())
+        val superclass: Type? = javaClass.genericSuperclass
+        val aClass = (superclass as ParameterizedType).actualTypeArguments[0] as Class<*>
+        try {
+            val method=aClass.getDeclaredMethod("inflate", LayoutInflater::class.java)
+            binding = method.invoke(null, layoutInflater) as T
+            setContentView(binding.root)
+        } catch (e: NoSuchMethodException) {
+            e.printStackTrace()
+        }
         initData()
         initView()
     }

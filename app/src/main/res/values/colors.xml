@@ -5,4 +5,22 @@
     <color name="colorAccent">#6200EE</color>
     <color name="white">#ffffff</color>
     <color name="red">#ff0000</color>
+    <color name="green">#00ff00</color>
+    <color name="white_01">#1AFFFFFF</color>
+    <color name="white_02">#33FFFFFF</color>
+    <color name="white_03">#4DFFFFFF</color>
+    <color name="white_04">#66FFFFFF</color>
+    <color name="white_05">#80FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="black_02">#33000000</color>
+    <color name="black_03">#4C000000</color>
+    <color name="black_04">#66000000</color>
+    <color name="black_05">#80000000</color>
+    <color name="black_06">#99000000</color>
+    <color name="black_07">#B3000000</color>
+    <color name="black_08">#CC000000</color>
+    <color name="blue_363565">#363565</color>
+    <color name="blue_363565_05">#80363565</color>
+    <color name="blue_363565_03">#4D363565</color>
+    <color name="gray">#4DFFFFFF</color>
 </resources>

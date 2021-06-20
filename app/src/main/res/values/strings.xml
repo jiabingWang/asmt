@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">爱上MT</string>
+    <string name="accessibility_description">自动点击需要该权限</string>
+    <string name="accessibility_permissions">辅助权限</string>
+    <string name="floating_window_permissions">悬浮窗权限</string>
+    <string name="open">开</string>
+    <string name="close">关</string>
+    <string name="start">开始</string>
 </resources>
