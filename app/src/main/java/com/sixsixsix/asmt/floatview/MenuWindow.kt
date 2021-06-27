@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.LinearLayout
 import com.sixsixsix.asmt.R
 import com.sixsixsix.asmt.service.AutoClickService
-import com.sixsixsix.asmt.util.screen
 import kotlinx.android.synthetic.main.float_window_menu.view.*
 
 /**
@@ -25,8 +24,11 @@ class MenuWindow(context: Context) : LinearLayout(context), IFloatWindow {
         LayoutInflater.from(context).inflate(
             R.layout.float_window_menu, this
         )
-        tv_click.setOnClickListener {
-            AutoClickService.sAutoClickService?.onClick()
+        tv_click_start.setOnClickListener {
+            AutoClickService.sAutoClickService?.startAutoClick()
+        }
+        tv_click_stop.setOnClickListener {
+            AutoClickService.sAutoClickService?.stopAutoClick()
         }
     }
 
@@ -36,8 +38,8 @@ class MenuWindow(context: Context) : LinearLayout(context), IFloatWindow {
                 measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
                 width = measuredWidth
                 height = measuredHeight
-                x = screen().width
-                y = screen().height
+                x = 0
+                y = 0
             })
         }
     }

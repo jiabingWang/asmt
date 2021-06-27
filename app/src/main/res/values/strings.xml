@@ -6,4 +6,6 @@
     <string name="open">开</string>
     <string name="close">关</string>
     <string name="start">开始</string>
+    <string name="stop">停止</string>
+    <string name="go_buy">前往抢购</string>
 </resources>

@@ -12,27 +12,37 @@ import com.sixsixsix.asmt.service.AutoClickService
  * @desc   : 辅助服务相关工具类
  */
 /**
- * 判断是否有辅助功能权限
+ * 一秒点次
  */
+const val TIMES_SECOND = 5
+
 /**
  * 辅助服务是否连接
  */
 var isAccessibilityServiceConnected = false
+
+/**
+ * 判断是否有辅助功能权限
+ */
 fun isAccessibilitySettingsOn(mContext: Context): Boolean {
     var accessibilityEnabled = 0
     // TestService为对应的服务
     val service = mContext.packageName + "/" + AutoClickService::class.java.canonicalName
     try {
-        accessibilityEnabled = Settings.Secure.getInt(mContext.applicationContext.contentResolver,
-            android.provider.Settings.Secure.ACCESSIBILITY_ENABLED)
+        accessibilityEnabled = Settings.Secure.getInt(
+            mContext.applicationContext.contentResolver,
+            android.provider.Settings.Secure.ACCESSIBILITY_ENABLED
+        )
     } catch (e: Settings.SettingNotFoundException) {
     }
 
     val mStringColonSplitter = TextUtils.SimpleStringSplitter(':')
 
     if (accessibilityEnabled == 1) {
-        val settingValue = Settings.Secure.getString(mContext.applicationContext.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+        val settingValue = Settings.Secure.getString(
+            mContext.applicationContext.contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
         if (settingValue != null) {
             mStringColonSplitter.setString(settingValue)
             while (mStringColonSplitter.hasNext()) {
@@ -47,6 +57,7 @@ fun isAccessibilitySettingsOn(mContext: Context): Boolean {
     }
     return false
 }
+
 /**
  * 获取所有已安装应用的数组
  */

@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -11,9 +12,12 @@ import androidx.annotation.MainThread
 import com.sixsixsix.asmt.DelayRecognizeProxy
 import com.sixsixsix.asmt.bean.ViewNode
 import com.sixsixsix.asmt.bean.ViewNode.Companion.EMPTY_NODE
+import com.sixsixsix.asmt.manager.DataStoreManager
 import com.sixsixsix.asmt.manager.FloatViewMediator
 import com.sixsixsix.asmt.util.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -42,7 +46,7 @@ class AutoClickService : AccessibilityService() {
      * 延迟任务的代理
      */
     private val mDelayRecognizeProxy = DelayRecognizeProxy()
-
+    private var mClickTimeTask: ClickTimeTask? = null
 
     /**
      * 按下悬浮球
@@ -59,6 +63,7 @@ class AutoClickService : AccessibilityService() {
      */
     @MainThread
     fun onActionUp() {
+        LogUtil.logD("onActionUp")
         //取消高亮
 //        mCurrentViewNode = EMPTY_NODE
         //取消延迟任务
@@ -70,60 +75,11 @@ class AutoClickService : AccessibilityService() {
      * 移动 - 耗时1ms
      */
     fun onActionMove(x: Int, y: Int) {
-        LogUtil.logD("X---${x} ---Y--${y}")
-        /**
-         * 遍历节点树，找到节点 - 耗时1ms
-         * @param unFindCallback 未进入节点回调
-         * @param findCallback 进入节点回调
-         * @return 当前节点 null：未进入节点
-         */
-        @MainThread
-        fun traverseViewNode(
-            x: Int,
-            y: Int,
-            unFindCallback: () -> Unit,
-            findCallback: (node: ViewNode) -> Unit
-        ) {
-            var tempNode: ViewNode? = null
-
-            if (mNodeList.isEmpty()) {
-                //节点树为空
-                LogUtil.logD("节点树为空")
-                unFindCallback.invoke()
-                return
-            }
-            for (everyNode in mNodeList) {
-                //找到节点
-                if (isInNode(x, y, everyNode.bound)) {
-                    if (tempNode == null) {
-                        tempNode = everyNode
-                    } else {
-                        if (everyNode.bound.contains(tempNode.bound)) {
-                            //抛弃大的
-                            //do nothing
-                        } else {
-                            tempNode = everyNode
-                        }
-                    }
-                }
-            }
-            if (tempNode == null) {
-                //未找到节点
-                unFindCallback.invoke()
-            } else {
-                findCallback.invoke(tempNode)
-            }
-
-        }
         //开始滑动
         onStartMove()
         traverseViewNode(x, y, {
             //未找到
-            if (mCurrentViewNode == EMPTY_NODE) {
-                //依然未找到
-                //do nothing
-                LogUtil.logD("依然未找到")
-            } else {
+            if (mCurrentViewNode != EMPTY_NODE) {
                 //取消延迟任务
                 LogUtil.logD("离开上一次的节点")
                 mDelayRecognizeProxy.cancelLastTask()
@@ -136,69 +92,67 @@ class AutoClickService : AccessibilityService() {
             if (mCurrentViewNode == EMPTY_NODE) {
                 //刚进入节点
                 LogUtil.logD("刚进入节点")
-                fun realDo() {
-                    if (mCurrentViewNode.bound.top == 0 && mCurrentViewNode.bound.left == 0) {
-
-                    } else {
-                        onMoveInNode()
-                        //开始延迟任务
-                        mDelayRecognizeProxy.startNewTask {
-                            LogUtil.logD("做事情")
-                        }
-                    }
-
-                }
-
-                if (it.isBigNode) {
-                    LogUtil.logD("isBigNode")
+                if ((mCurrentViewNode.bound.top == 0 && mCurrentViewNode.bound.left == 0).not()) {
                     mCurrentViewNode = it
-                    mDelayRecognizeProxy.startNewTask {
-                        runOnUiThread {
-                            realDo()
-                        }
-                    }
-                } else {
-                    LogUtil.logD("isBigNode.not")
-                    mCurrentViewNode = it
-                    realDo()
+                    onMoveInNode()
                 }
             } else {
                 //不是刚进入节点
                 LogUtil.logD("1111不是刚进入节点")
-                if (it == mCurrentViewNode) {
-                    //和上次是同一个，说明没有移动出去
-                    LogUtil.logD("说明没有移动出去")
-                    //do nothing
-                } else {
+                if (it != mCurrentViewNode) {
                     //和上次不是同一个，说明移动出去了
                     LogUtil.logD("和上次不是同一个")
-                    fun realDo() {
-                        onMoveInNode()
-                        //重新开始延迟任务
-                        mDelayRecognizeProxy.startNewTask { LogUtil.logD("做事情") }
-                    }
-                    if (it.isBigNode) {
-                        //取消延迟任务
-                        LogUtil.logD("22222")
-                        mDelayRecognizeProxy.cancelLastTask()
-                        onMoveOutNode()
-                        mCurrentViewNode = it
+                    onMoveOutNode()
+                    mCurrentViewNode = it
+                    onMoveInNode()
+                    //重新开始延迟任务
+                    mDelayRecognizeProxy.startNewTask { LogUtil.logD("做事情") }
+                }
+            }
+        }
+    }
 
-                        mDelayRecognizeProxy.startNewTask {
-                            runOnUiThread {
-                                realDo()
-                            }
-                        }
+    /**
+     * 遍历节点树，找到节点 - 耗时1ms
+     * @param unFindCallback 未进入节点回调
+     * @param findCallback 进入节点回调
+     * @return 当前节点 null：未进入节点
+     */
+    @MainThread
+    private fun traverseViewNode(
+        x: Int,
+        y: Int,
+        unFindCallback: () -> Unit,
+        findCallback: (node: ViewNode) -> Unit
+    ) {
+        var tempNode: ViewNode? = null
+
+        if (mNodeList.isEmpty()) {
+            //节点树为空
+            LogUtil.logD("节点树为空")
+            unFindCallback.invoke()
+            return
+        }
+        for (everyNode in mNodeList) {
+            //找到节点
+            if (isInNode(x, y, everyNode.bound)) {
+                if (tempNode == null) {
+                    tempNode = everyNode
+                } else {
+                    if (everyNode.bound.contains(tempNode.bound)) {
+                        //抛弃大的
+                        //do nothing
                     } else {
-                        LogUtil.logD("33333")
-                        //取消延迟任务
-                        mDelayRecognizeProxy.cancelLastTask()
-                        onMoveOutNode()
-                        mCurrentViewNode = it
-                        realDo()
+                        tempNode = everyNode
                     }
                 }
             }
+        }
+        if (tempNode == null) {
+            //未找到节点
+            unFindCallback.invoke()
+        } else {
+            findCallback.invoke(tempNode)
         }
     }
 
@@ -263,6 +217,7 @@ class AutoClickService : AccessibilityService() {
         mDelayRecognizeProxy.terminate()
         isAccessibilityServiceConnected = false
         sAutoClickService = null
+        stopAutoClick()
         return super.onUnbind(intent)
     }
 
@@ -302,7 +257,7 @@ class AutoClickService : AccessibilityService() {
             }
             //添加到列表中
             LogUtil.logD("添加到列表中${bound.toString()}")
-            mNodeList.offer(ViewNode(bound, content, contentDescription, isBigNode,nodeInfo))
+            mNodeList.offer(ViewNode(bound, content, contentDescription, isBigNode, nodeInfo))
         }
 
         /**
@@ -395,8 +350,45 @@ class AutoClickService : AccessibilityService() {
             }
         }
     }
-    fun onClick(){
+
+    /**
+     * 开始自动点击任务
+     */
+    fun startAutoClick() {
         LogUtil.logD("模拟点击--${mCurrentViewNode.bound}")
-        mCurrentViewNode.nodeInfo?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+        val timeList = mutableListOf<String>()
+        GlobalScope.launch {
+
+            DataStoreManager.getChannelList().forEach {
+                // todo 修改后通知这边
+                timeList.add(it.time)
+            }
+        }
+        mClickTimeTask =
+            ClickTimeTask {
+                GlobalScope.launch {
+                    if (timeList.contains(getCurrentTime())) {
+                        //因为1秒判断10次，所以能在第一时间进入并且点击
+                        LogUtil.logD("模拟点击${getCurrentTimeHMS()}")
+                        mCurrentViewNode.nodeInfo?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        stopAutoClick()
+                    }
+                }
+                true
+            }
+        val period = 1000.div(TIMES_SECOND)
+//        mClickTimeTask =
+//            ClickTimeTask {
+//                LogUtil.logD("模拟点击--${mCurrentViewNode.bound}")
+//                mCurrentViewNode.nodeInfo?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+//            }
+        Timer().schedule(mClickTimeTask, Date(), period.toLong())
+    }
+
+    fun stopAutoClick() {
+        LogUtil.logD("stopAutoClick")
+        Timer().cancel()
+        mClickTimeTask?.cancel()
+        mClickTimeTask = null
     }
 }

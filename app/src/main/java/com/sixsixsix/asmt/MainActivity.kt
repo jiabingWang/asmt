@@ -1,80 +1,77 @@
 package com.sixsixsix.asmt
 
-import android.content.Intent
-import android.provider.Settings
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.sixsixsix.asmt.base.BaseActivity
+import com.sixsixsix.asmt.base.BaseFragment
 import com.sixsixsix.asmt.databinding.ActivityMainBinding
-import com.sixsixsix.asmt.manager.FloatViewMediator
-import com.sixsixsix.asmt.util.floatwindowpermission.FloatWindowPermissionUtil
-import com.sixsixsix.asmt.util.isAccessibilitySettingsOn
-import com.sixsixsix.asmt.util.toast
+import com.sixsixsix.asmt.fragment.FeaturesFragment
+import com.sixsixsix.asmt.fragment.SettingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
-    /**
-     * 辅助功能权限
-     */
-    private var mPermissionAccessibility = false
-
-    /**
-     * 悬浮窗权限
-     */
-    private var mPermissionFloatWindow = false
 
 
+    private val mFgList = mutableListOf<Fragment>()
     override fun initData() {
-
+        mFgList.add(FeaturesFragment.newInstance())
+        mFgList.add(SettingFragment.newInstance())
     }
 
     override fun initView() {
-        binding.tvAccessibilityPermissionsStatus.setOnClickListener {
-            if (mPermissionAccessibility) {
-                toast("您已有权限")
-            } else {
-                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                })
-            }
-        }
-        binding.tvFloatingWindowPermissionsStatus.setOnClickListener {
-            if (mPermissionFloatWindow) {
-                toast("您已有权限")
-            } else {
-                FloatWindowPermissionUtil.applyPermission(this)
-            }
-        }
-        binding.tvStart.setOnClickListener {
-            if (mPermissionAccessibility && mPermissionFloatWindow) {
-                FloatViewMediator.start(this@MainActivity)
-            } else {
-                toast("没有权限")
-            }
+        initViewPager()
+        initNav()
+    }
+
+    private fun initViewPager() {
+        binding.viewpager.run {
+            adapter = FgAdapter(supportFragmentManager)
+            offscreenPageLimit = mFgList.size
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {
+                }
+
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+
+                }
+
+                override fun onPageSelected(position: Int) {
+                    binding.bottomnavigation.menu.getItem(position).isChecked = true
+                }
+
+            })
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        mPermissionAccessibility = isAccessibilitySettingsOn(App.sApp)
-        binding.tvAccessibilityPermissionsStatus.apply {
-            if (mPermissionAccessibility) {
-                text = getString(R.string.open)
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.green))
-            } else {
-                text = getString(R.string.close)
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.red))
+    private fun initNav() {
+        binding.bottomnavigation.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.features -> {
+                    binding.viewpager.currentItem = 0
+                }
+
+                R.id.setting -> {
+                    binding.viewpager.currentItem = 1
+                }
             }
+            true
         }
-        mPermissionFloatWindow = FloatWindowPermissionUtil.checkPermission(this)
-        binding.tvFloatingWindowPermissionsStatus.apply {
-            if (mPermissionFloatWindow) {
-                text = getString(R.string.open)
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.green))
-            } else {
-                text = getString(R.string.close)
-                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.red))
-            }
-        }
+    }
+
+    inner class FgAdapter(fm: FragmentManager) : FragmentPagerAdapter(
+        fm,
+        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+    ) {
+        override fun getItem(position: Int) = mFgList[position]
+
+        override fun getCount() = mFgList.size
+
     }
 }

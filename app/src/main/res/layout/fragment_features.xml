@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv_accessibility_permissions_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accessibility_permissions"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="22dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/tv_accessibility_permissions_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/close"
+        android:textColor="@color/red"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_accessibility_permissions_title"
+        android:textSize="50sp"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/tv_floating_window_permissions_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/floating_window_permissions"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="22dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_accessibility_permissions_status"/>
+    <TextView
+        android:id="@+id/tv_floating_window_permissions_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/close"
+        android:textColor="@color/red"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_floating_window_permissions_title"
+        android:textSize="50sp"
+        android:layout_marginTop="20dp" />
+    <TextView
+        android:id="@+id/tv_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="100dp"
+        android:textSize="70sp"
+        android:textColor="@color/green"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

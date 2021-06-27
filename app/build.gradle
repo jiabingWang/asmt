@@ -60,7 +60,7 @@ dependencies {
     kapt Deps.hilt_compiler
     //net
     implementation Deps.okhttp
-//    implementation Deps.gson
+    implementation Deps.gson
 //    implementation Deps.retrofit
 //    implementation Deps.converter_gson
 //    implementation Deps.coroutines_adapter
@@ -72,6 +72,9 @@ dependencies {
     implementation Deps.lifecycle_runtime_ktx
     implementation Deps.lifecycle_livedata_ktx
 
-//    implementation Deps.base_recycler_helper
-//    implementation Deps.glide
+    //datastore
+    implementation Deps.datastore_preferences
+    implementation Deps.datastore_preferences_core
+    implementation Deps.base_recycler_helper
+    implementation Deps.glide
 }

@@ -3,12 +3,11 @@ package com.sixsixsix.asmt
 import android.app.Application
 import android.content.IntentFilter
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.sixsixsix.asmt.manager.AccessibilityStrategy
-import com.sixsixsix.asmt.manager.AccessibilityViewStrategy
-import com.sixsixsix.asmt.manager.OnTouchImpl
-import com.sixsixsix.asmt.manager.OnViewImpl
+import com.sixsixsix.asmt.manager.*
 import com.sixsixsix.asmt.receiver.ClickBallReceiver
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * @author : jiaBing
@@ -27,6 +26,9 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         sApp = this
+        GlobalScope.launch {
+            DataStoreManager.create(sApp,packageName)
+        }
         receiver = ClickBallReceiver()
         OnTouchImpl.setStrategy(AccessibilityStrategy())
         OnViewImpl.setStrategy(AccessibilityViewStrategy())
