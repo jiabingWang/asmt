@@ -20,6 +20,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mFgList.add(FeaturesFragment.newInstance())
         mFgList.add(SettingFragment.newInstance())
         //提交1
+        //补充提交
     }
 
     override fun initView() {
