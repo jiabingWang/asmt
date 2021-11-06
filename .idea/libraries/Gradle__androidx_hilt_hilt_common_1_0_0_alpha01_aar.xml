@@ -4,10 +4,14 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0c9152e879e6591d646e2b1532a54b74/hilt-common-1.0.0-alpha01/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0c9152e879e6591d646e2b1532a54b74/hilt-common-1.0.0-alpha01/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0c9152e879e6591d646e2b1532a54b74/hilt-common-1.0.0-alpha01/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/Android/caches/transforms-2/files-2.1/0c9152e879e6591d646e2b1532a54b74/hilt-common-1.0.0-alpha01/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/Android/caches/transforms-2/files-2.1/0c9152e879e6591d646e2b1532a54b74/hilt-common-1.0.0-alpha01/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/Android/caches/transforms-2/files-2.1/0c9152e879e6591d646e2b1532a54b74/hilt-common-1.0.0-alpha01/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.hilt/hilt-common/1.0.0-alpha01/f4082ada9d2757b46ef498594f0210eca6bb2141/hilt-common-1.0.0-alpha01-sources.jar!/" />
+      <root url="jar://$USER_HOME$/Android/caches/modules-2/files-2.1/androidx.hilt/hilt-common/1.0.0-alpha01/f4082ada9d2757b46ef498594f0210eca6bb2141/hilt-common-1.0.0-alpha01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asmt.buildSrc.iml" filepath="$PROJECT_DIR$/.idea/modules/asmt.buildSrc.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/爱上MT.iml" filepath="$PROJECT_DIR$/.idea/modules/爱上MT.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/爱上MT.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/爱上MT.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/爱上MT.buildSrc.iml" filepath="$PROJECT_DIR$/.idea/modules/爱上MT.buildSrc.iml" />
     </modules>
   </component>
 </project>
