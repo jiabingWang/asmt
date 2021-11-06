@@ -27,6 +27,7 @@ class DelayRecognizeProxy(val delayMillis:Long =200) {
      */
     fun cancelLastTask() {
         mDelayHandler.removeMessages(1)
+        //补充提交
     }
     /**
      * 开始延迟任务
